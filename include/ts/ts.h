@@ -1118,6 +1118,27 @@ tsapi TSReturnCode TSMutexLockTry(TSMutex mutexp);
 
 tsapi void TSMutexUnlock(TSMutex mutexp);
 
+#ifdef __cplusplus
+tsapi class TSScopedMutexLock {
+ public:
+  explicit TSScopedMutexLock(TSMutex mutexp) : mutexp_(mutexp) {
+    TSMutexLock(mutexp_);
+  }
+
+  ~TSScopedMutexLock() {
+    TSMutexUnlock(mutexp_);
+  }
+
+  TSScopedMutexLock(const TSScopedMutexLock &) = delete;
+  TSScopedMutexLock(TSScopedMutexLock&&) = delete;
+  TSScopedMutexLock& operator=(const TSScopedMutexLock&) = delete;
+  TSScopedMutexLock& operator=(TSScopedMutexLock&&) = delete;
+
+ private:
+  TSMutex mutexp_;
+};
+#endif /* __cplusplus */
+
 /* --------------------------------------------------------------------------
    cachekey */
 /**
